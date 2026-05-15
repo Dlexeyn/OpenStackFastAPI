@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+openstacksdk
+pydantic
+pydantic-settings

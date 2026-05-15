@@ -1,0 +1,10 @@
+clouds:
+  mycloud:
+    auth:
+      auth_url: http://localhost:5000/
+      username: admin
+      password: 9c2666596a68487b
+      project_name: admin
+      user_domain_name: Default
+      project_domain_name: Default
+    region_name: RegionOne
