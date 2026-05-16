@@ -1,34 +1,27 @@
+from fastapi import Request, FastAPI
+from contextlib import asynccontextmanager
 import openstack
-from settings import settings
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
 
-_conn = None
+    conn = openstack.connect(cloud='mycloud')
+    app.state.openstack_conn = conn
 
+    print("OpenStack connection established")
 
-def get_conn():
-    global _conn
+    yield
 
-    if _conn is None:
-        print("[OpenStack] Creating connection...")
+    app.state.openstack_conn = None
+    print("OpenStack connection released")
 
-        _conn = openstack.connection.Connection(
-            region_name='example-region',
-            auth={
-                'auth_url': settings.os_auth_url,
-                'username': settings.os_username,
-                'password': settings.os_username,
-                'project_id': '044491489eda437dbcae90caaa344280',
-                'user_domain_id': 'default',
-            },
-            compute_api_version='3',
+def get_conn(request: Request):
+    conn = request.app.state.openstack_conn
+
+    if conn is None:
+        raise HTTPException(
+            status_code=500,
+            detail="OpenStack connection unavailable"
         )
 
-
-        try:
-            list(_conn.compute.servers(limit=1))
-            print("[OpenStack] API reachable (compute OK)")
-        except Exception as e:
-            print(f"[OpenStack] Connection test FAILED: {e}")
-        print("[OpenStack] Connection created successfully")
-
-    return _conn
+    return conn
