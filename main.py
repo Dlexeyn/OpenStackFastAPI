@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request, HTTPException
-from openstack_client import get_conn, lifespan
+from fastapi import FastAPI
+from openstack_client import lifespan
 from routers import nova, neutron, glance
 
 app = FastAPI(lifespan=lifespan)

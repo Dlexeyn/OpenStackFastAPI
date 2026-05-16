@@ -53,13 +53,12 @@ def create_server(request: Request, payload: ServerCreateRequest):
         ]
     )
 
+    new_server = conn.compute.wait_for_server(server)
+
     return ServerResponse(
-        id=server.id,
-        name=server.name,
-        status=server.status,
-        image_id=payload.image_id,
-        flavor_id=payload.flavor_id,
-        addresses=getattr(server, "addresses", None)
+        id=new_server.id,
+        name=new_server.name,
+        status=new_server.status
     )
 
 

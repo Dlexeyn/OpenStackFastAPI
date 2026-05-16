@@ -1,4 +1,4 @@
-from fastapi import Request, FastAPI
+from fastapi import Request, FastAPI, HTTPException
 from contextlib import asynccontextmanager
 import openstack
 

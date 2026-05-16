@@ -14,11 +14,7 @@ class ServerResponse(BaseModel):
     id: str
     name: str
     status: str
-
-    image_id: Optional[str] = None
-    flavor_id: Optional[str] = None
-    addresses: Optional[dict] = None
-
+    
 class ServerActionResponse(BaseModel):
     id: str
     status: str
