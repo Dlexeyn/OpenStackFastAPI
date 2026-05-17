@@ -44,14 +44,31 @@ def create_server(request: Request, payload: ServerCreateRequest):
 
     conn = get_conn(request)
 
-    server = conn.compute.create_server(
-        name=payload.name,
-        image_id=payload.image_id,
-        flavor_id=payload.flavor_id,
-        networks=[
+    server_args = {
+        "name": payload.name,
+        "flavor_id": payload.flavor_id,
+        "networks": [
             {"uuid": payload.network_id}
         ]
-    )
+    }
+
+    # Загрузка из образа
+    if payload.image_id:
+        server_args["image_id"] = payload.image_id
+
+    # Загрузка из volume
+    if payload.volume_id:
+        server_args["block_device_mapping_v2"] = [
+            {
+                "boot_index": 0,
+                "uuid": payload.volume_id,
+                "source_type": "volume",
+                "destination_type": "volume",
+                "delete_on_termination": False
+            }
+        ]
+
+    server = conn.compute.create_server(**server_args)
 
     new_server = conn.compute.wait_for_server(server)
 
